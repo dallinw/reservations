@@ -1,6 +1,6 @@
 use std::error;
 
-use reservations_library::config::{AppConfig, load_config};
+use reservations_library::config::{load_config, AppConfig};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn error::Error>> {

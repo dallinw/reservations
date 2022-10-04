@@ -11,7 +11,11 @@ pub struct AppConfig {
 pub async fn load_config() -> AppConfig {
     // Log configuration and bootstrap
     dotenv().ok();
-    SimpleLogger::new().with_utc_timestamps().env().init().unwrap_or_default();
+    SimpleLogger::new()
+        .with_utc_timestamps()
+        .env()
+        .init()
+        .unwrap_or_default();
 
     let log_level = env::var("RUST_LOG");
 
