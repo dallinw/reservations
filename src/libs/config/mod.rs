@@ -1,11 +1,13 @@
 use dotenv::dotenv;
 use simple_logger::SimpleLogger;
 use std::env;
+use std::env::VarError;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone)]
+
+#[derive(Deserialize, Debug)]
 pub struct AppConfig {
-    // pub log_level: String,
-    // pub environment: String,
+    pub environment: String,
 }
 
 pub async fn load_config() -> AppConfig {
@@ -17,10 +19,16 @@ pub async fn load_config() -> AppConfig {
         .init()
         .unwrap_or_default();
 
-    let log_level = env::var("RUST_LOG");
+    match envy::from_env::<AppConfig>() {
+        Ok(config) => {
+            log::info!("Successfully loaded in app configuration");
 
-    AppConfig {
-        // log_level: "DEBUG",
-        // environment: "development",
+            config
+        }
+        Err(error) => {
+            log::error!("{:#?}", error);
+
+            panic!("{:#?}", error)
+        }
     }
 }
