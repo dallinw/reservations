@@ -1,3 +1,5 @@
+pub mod api_errors;
+
 use dotenv::dotenv;
 use simple_logger::SimpleLogger;
 use std::env;
