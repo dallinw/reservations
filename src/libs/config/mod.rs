@@ -1,11 +1,8 @@
-use std::env;
-use std::env::VarError;
-
-use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, RecyclingMethod, Runtime};
+use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod, Runtime, Transaction};
 use dotenv::dotenv;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use simple_logger::SimpleLogger;
-use tokio_postgres::NoTls;
+use tokio_postgres::{GenericClient, NoTls, Statement};
 
 pub mod api_errors;
 
@@ -20,8 +17,8 @@ pub struct AppConfig {
 }
 
 pub struct AppState {
-    database_pool: Pool,
-    app_config: AppConfig,
+    pub database_pool: Pool,
+    pub app_config: AppConfig,
 }
 
 pub async fn load_config() -> AppConfig {
@@ -48,10 +45,35 @@ pub async fn load_config() -> AppConfig {
 }
 
 pub async fn create_app_state(app_config: AppConfig) -> AppState {
-    let mut cfg = Config::new();
+    let mut cfg: Config = Config::new();
     cfg.dbname = Some(app_config.database_name.clone());
+    cfg.host = Some(app_config.database_host.clone());
+    cfg.user = Some(app_config.database_username.clone());
+    cfg.password = Some(app_config.database_password.clone());
+    cfg.port = Some(app_config.database_port.clone() as u16);
     cfg.manager = Some(ManagerConfig { recycling_method: RecyclingMethod::Fast });
+
     let database_pool: Pool = cfg.create_pool(Some(Runtime::Tokio1), NoTls).unwrap();
+
+    // Test connection
+    let mut client = database_pool.get().await.unwrap();
+    let transaction: Transaction = client.transaction().await.unwrap();
+    let query = "SELECT 1";
+
+    let statement: Statement = transaction.prepare_cached(query).await.unwrap();
+
+    let raw_result = transaction.query(&statement, &[]).await;
+    match raw_result {
+        Ok(value) => {
+            log::debug!("{:#?}", value);
+            log::info!("Successfully verified connection to database");
+        }
+        Err(error) => {
+            log::error!("{:#?}", error);
+
+            panic!("Cannot connect to DB");
+        }
+    };
 
     AppState {
         database_pool,

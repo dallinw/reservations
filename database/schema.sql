@@ -1,3 +1,5 @@
+-- https://dbdiagram.io/d/632308b00911f91ba5b9fbaf
+
 CREATE TABLE "carriers"
 (
     "id"           BIGSERIAL PRIMARY KEY,
