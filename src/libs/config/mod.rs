@@ -2,7 +2,7 @@ use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod, Runtime, T
 use dotenv::dotenv;
 use serde::Deserialize;
 use simple_logger::SimpleLogger;
-use tokio_postgres::{GenericClient, NoTls, Statement};
+use tokio_postgres::{NoTls, Statement};
 
 pub mod api_errors;
 
