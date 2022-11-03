@@ -1,3 +1,15 @@
+//! # Airplane Seat Reservation Microservice Demo
+//!
+//!This crate and service provides a real-world, or as close to as possible, example as possible of
+//! what a Rust microservice could look like. Within the app framework is a demonstration of
+//! using a database for a persistent state store, cache for speed and low-latency actions, along
+//! with a suite of quality of life features, tests, pipeline demos etc.
+//!
+//! For deployment it is built to showcase bleeding edge deployment strategies, on Kubernetes
+//! and leveraging Kubernetes features to further enhance the deployment.
+//!
+//! For example into the Kubernetes deployment environment feel free to reference the [Platform Deployment Helm Chart](https://github.com/dallinw/platform-deployment)
+
 use std::error;
 
 use actix_cors::Cors;
