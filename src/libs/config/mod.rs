@@ -1,5 +1,6 @@
 use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod, Runtime, Transaction};
 use dotenv::dotenv;
+use log::LevelFilter;
 use serde::Deserialize;
 use simple_logger::SimpleLogger;
 use tokio_postgres::{NoTls, Statement};
@@ -26,6 +27,7 @@ pub async fn load_config() -> AppConfig {
     dotenv().ok();
     SimpleLogger::new()
         .with_utc_timestamps()
+        .with_level(LevelFilter::Debug)
         .env()
         .init()
         .unwrap_or_default();

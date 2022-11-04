@@ -1,4 +1,5 @@
-use actix_web::{get, HttpResponse};
+use actix_web::{get, HttpResponse, web};
+use actix_web::cookie::time::macros::time;
 use actix_web::HttpRequest;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -6,6 +7,7 @@ use serde::{Deserialize, Serialize};
 use postgres_types::{FromSql, ToSql};
 
 use crate::config::api_errors::ApiError;
+use crate::config::AppState;
 
 #[derive(Deserialize, Serialize, Debug, Clone, ToSql, FromSql)]
 pub struct Route {
@@ -16,15 +18,20 @@ pub struct Route {
 #[derive(Deserialize, Serialize, Debug, Clone, ToSql, FromSql)]
 pub struct RequestBody {
     pub route: Route,
-    pub carrier: String,
-    pub departure_timestamp: DateTime<Utc>,
+    pub flight: String,
+    pub departure: DateTime<Utc>,
 }
 
 /// Anonymous requests allows to view and fetch seats for a given request body
 #[get("/seats")]
-pub async fn handle_get(request: HttpRequest) -> Result<HttpResponse, ApiError> {
+pub async fn handle_get(
+    http_request: HttpRequest,
+    app_state: web::Data<AppState>,
+    body: web::Json<RequestBody>,
+) -> Result<HttpResponse, ApiError> {
     log::debug!("Getting available seats with request");
-    log::debug!("{:#?}", request);
+    log::debug!("{:#?}", http_request);
+    log::debug!("{:#?}", body);
 
     Ok(HttpResponse::Ok().json("ok"))
 }
