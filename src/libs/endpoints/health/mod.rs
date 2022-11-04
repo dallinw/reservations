@@ -1,5 +1,6 @@
-use actix_web::{web, get, HttpResponse};
+use actix_web::{get, HttpResponse};
 use actix_web::HttpRequest;
+
 use crate::config::api_errors::ApiError;
 
 #[get("/health")]

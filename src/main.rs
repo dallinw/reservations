@@ -16,7 +16,7 @@ use actix_cors::Cors;
 use actix_web::{App, HttpServer, middleware, web};
 
 use reservations_library::config::{AppConfig, AppState, create_app_state, load_config};
-use reservations_library::endpoints::health;
+use reservations_library::endpoints::{health, seats};
 
 #[actix_web::main]
 async fn main() -> Result<(), Box<dyn error::Error>> {
@@ -33,6 +33,7 @@ async fn main() -> Result<(), Box<dyn error::Error>> {
             .app_data(app_state.clone())
 
             .service(health::handle_get)
+            .service(seats::handle_get)
     })
         .bind(("0.0.0.0", 8080))?
         .run()
