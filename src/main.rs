@@ -15,7 +15,7 @@ use std::error;
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, middleware, web};
 
-use reservations_library::config::{AppConfig, AppState, create_app_state, load_config};
+use reservations_library::config::{AppState, create_app_state};
 use reservations_library::endpoints::{health, seats};
 
 #[actix_web::main]

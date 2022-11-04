@@ -1,10 +1,8 @@
 use actix_web::{get, HttpResponse, web};
-use actix_web::cookie::time::macros::time;
 use actix_web::HttpRequest;
 use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
-
 use postgres_types::{FromSql, ToSql};
+use serde::{Deserialize, Serialize};
 
 use crate::config::api_errors::ApiError;
 use crate::config::AppState;

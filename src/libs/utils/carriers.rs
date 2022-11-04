@@ -32,13 +32,13 @@ pub async fn create(
             carriers
             (
                 name,
-                abbreviation,
+                abbreviation
             )
         VALUES
             ($1, $2)
         ON CONFLICT DO NOTHING
         RETURNING
-            id, name, abbreviation, created_at
+            id, name, abbreviation, created_at;
     "#;
 
     let statement: Statement = transaction.prepare_cached(query).await.unwrap();
@@ -64,7 +64,7 @@ pub async fn create(
         let id: i64 = row.get(0);
         let name: String = row.get(1);
         let abbreviation: String = row.get(2);
-        let created_at: DateTime<Utc> = row.get(4);
+        let created_at: DateTime<Utc> = row.get(3);
 
         let carrier: Carrier = Carrier {
             id,

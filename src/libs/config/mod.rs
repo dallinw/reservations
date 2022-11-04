@@ -1,4 +1,3 @@
-use actix_web::App;
 use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod, Runtime, Transaction};
 use dotenv::dotenv;
 use log::LevelFilter;

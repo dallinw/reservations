@@ -21,7 +21,6 @@
 //! and so on based upon the flight
 
 use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
 
 use crate::config::api_errors::ApiError;
 
