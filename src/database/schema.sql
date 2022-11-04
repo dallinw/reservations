@@ -1,15 +1,14 @@
 CREATE TABLE "carriers"
 (
-    "id"           BIGSERIAL PRIMARY KEY,
+    "abbreviation" text PRIMARY KEY,
     "name"         text NOT NULL,
-    "abbreviation" text NOT NULL,
     "created_at"   timestamptz DEFAULT (now())
 );
 
 CREATE TABLE "flights"
 (
     "id"                    BIGSERIAL,
-    "carrier"               bigint NOT NULL,
+    "carrier"               text   NOT NULL,
     "first_class_seat_rows" bigint NOT NULL,
     "economy_seat_rows"     bigint NOT NULL,
     "width"                 bigint NOT NULL,
@@ -19,12 +18,12 @@ CREATE TABLE "flights"
 CREATE TABLE "schedules"
 (
     "id"          BIGSERIAL PRIMARY KEY,
-    "departure"   timestamptz,
-    "arrival"     timestamptz,
-    "source"      text   NOT NULL,
-    "destination" text   NOT NULL,
-    "flight"      bigint,
-    "carrier"     bigint NOT NULL
+    "departure"   timestamptz NOT NULL,
+    "arrival"     timestamptz NOT NULL,
+    "source"      text        NOT NULL,
+    "destination" text        NOT NULL,
+    "flight"      bigint      NOT NULL,
+    "carrier"     text        NOT NULL
 );
 
 CREATE TABLE "reservations"
@@ -37,7 +36,7 @@ CREATE TABLE "reservations"
 );
 
 ALTER TABLE "flights"
-    ADD FOREIGN KEY ("carrier") REFERENCES "carriers" ("id");
+    ADD FOREIGN KEY ("carrier") REFERENCES "carriers" ("abbreviation");
 
 ALTER TABLE "schedules"
     ADD FOREIGN KEY ("flight", "carrier") REFERENCES "flights" ("id", "carrier");

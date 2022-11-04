@@ -12,11 +12,35 @@ async fn seed_database(app_state: Data<AppState>) -> Result<(), ApiError> {
     let mut client: Client = app_state.database_pool.get().await.unwrap();
     let transaction: Transaction = client.transaction().await.unwrap();
 
-    let carrier = reservations_library::utils::carriers::create(
+    let carrier_outcome = reservations_library::utils::carriers::create(
         &transaction,
         &"DELTA".to_string(),
         &"DA".to_string(),
     ).await;
+
+    match carrier_outcome {
+        Ok(value) => {
+            log::debug!("{:#?}", value);
+        }
+        Err(error) => {
+            log::error!("{:#?}", error);
+        }
+    }
+
+    let flight_outcome = reservations_library::utils::flights::create(
+        &transaction,
+        &"DELTA".to_string(),
+        &"DA".to_string(),
+    ).await;
+
+    match carrier_outcome {
+        Ok(value) => {
+            log::debug!("{:#?}", value);
+        }
+        Err(error) => {
+            log::error!("{:#?}", error);
+        }
+    }
 
     let commit_result = transaction.commit().await;
 
@@ -34,8 +58,6 @@ async fn seed_database(app_state: Data<AppState>) -> Result<(), ApiError> {
 
 #[cfg(test)]
 mod tests {
-    use actix_web::web;
-
     use reservations_library::config::{AppState, create_app_state};
 
     // Note this useful idiom: importing names from outer (for mod tests) scope.
