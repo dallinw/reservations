@@ -20,8 +20,7 @@ use reservations_library::endpoints::{health, seats};
 
 #[actix_web::main]
 async fn main() -> Result<(), Box<dyn error::Error>> {
-    let app_config: AppConfig = load_config().await;
-    let created_app_state: AppState = create_app_state(app_config).await;
+    let created_app_state: AppState = create_app_state().await;
     let app_state: web::Data<AppState> = web::Data::new(created_app_state);
 
     HttpServer::new(move || {

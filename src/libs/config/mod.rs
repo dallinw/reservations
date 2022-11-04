@@ -1,3 +1,4 @@
+use actix_web::App;
 use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod, Runtime, Transaction};
 use dotenv::dotenv;
 use log::LevelFilter;
@@ -46,7 +47,9 @@ pub async fn load_config() -> AppConfig {
     }
 }
 
-pub async fn create_app_state(app_config: AppConfig) -> AppState {
+pub async fn create_app_state() -> AppState {
+    let app_config: AppConfig = load_config().await;
+
     let mut cfg: Config = Config::new();
     cfg.dbname = Some(app_config.database_name.clone());
     cfg.host = Some(app_config.database_host.clone());
