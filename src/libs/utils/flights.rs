@@ -15,7 +15,7 @@ use crate::config::api_errors::ApiError;
 #[derive(Deserialize, Serialize, Debug, Clone, ToSql, FromSql)]
 pub struct Flight {
     pub id: i64,
-    pub carrier: i64,
+    pub carrier: String,
     pub first_class_seat_rows: i64,
     pub economy_seat_rows: i64,
     pub width: i64,
@@ -23,7 +23,7 @@ pub struct Flight {
 
 pub async fn create(
     transaction: &Transaction<'_>,
-    carrier: &i64,
+    carrier: &String,
     first_class_seat_rows: &i64,
     economy_seat_rows: &i64,
     width: &i64,
@@ -68,7 +68,7 @@ pub async fn create(
     for row in rows {
         // Postgres forces you to make assumptions
         let id: i64 = row.get(0);
-        let carrier: i64 = row.get(1);
+        let carrier: String = row.get(1);
         let first_class_seat_rows: i64 = row.get(2);
         let economy_seat_rows: i64 = row.get(3);
         let width: i64 = row.get(4);

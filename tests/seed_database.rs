@@ -29,11 +29,13 @@ async fn seed_database(app_state: Data<AppState>) -> Result<(), ApiError> {
 
     let flight_outcome = reservations_library::utils::flights::create(
         &transaction,
-        &"DELTA".to_string(),
         &"DA".to_string(),
+        &3,
+        &6,
+        &4,
     ).await;
 
-    match carrier_outcome {
+    match flight_outcome {
         Ok(value) => {
             log::debug!("{:#?}", value);
         }

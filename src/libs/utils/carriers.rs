@@ -15,7 +15,6 @@ use crate::config::api_errors::ApiError;
 
 #[derive(Deserialize, Serialize, Debug, Clone, ToSql, FromSql)]
 pub struct Carrier {
-    pub id: i64,
     pub name: String,
     pub abbreviation: String,
     pub created_at: DateTime<Utc>,
@@ -38,7 +37,7 @@ pub async fn create(
             ($1, $2)
         ON CONFLICT DO NOTHING
         RETURNING
-            id, name, abbreviation, created_at;
+            name, abbreviation, created_at;
     "#;
 
     let statement: Statement = transaction.prepare_cached(query).await.unwrap();
@@ -61,13 +60,11 @@ pub async fn create(
 
     for row in rows {
         // Postgres forces you to make assumptions
-        let id: i64 = row.get(0);
-        let name: String = row.get(1);
-        let abbreviation: String = row.get(2);
-        let created_at: DateTime<Utc> = row.get(3);
+        let name: String = row.get(0);
+        let abbreviation: String = row.get(1);
+        let created_at: DateTime<Utc> = row.get(2);
 
         let carrier: Carrier = Carrier {
-            id,
             name,
             abbreviation,
             created_at,
