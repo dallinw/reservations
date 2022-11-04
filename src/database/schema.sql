@@ -1,5 +1,3 @@
--- https://dbdiagram.io/d/632308b00911f91ba5b9fbaf
-
 CREATE TABLE "carriers"
 (
     "id"           BIGSERIAL PRIMARY KEY,
@@ -8,14 +6,14 @@ CREATE TABLE "carriers"
     "created_at"   timestamptz DEFAULT (now())
 );
 
-CREATE TABLE "airplanes"
+CREATE TABLE "flights"
 (
-    "id"          BIGSERIAL PRIMARY KEY,
-    "carrier"     bigint NOT NULL,
-    "route"       text,
-    "first_class" bigint NOT NULL,
-    "economy"     bigint NOT NULL,
-    "width"       bigint NOT NULL
+    "id"                    BIGSERIAL,
+    "carrier"               bigint NOT NULL,
+    "first_class_seat_rows" bigint NOT NULL,
+    "economy_seat_rows"     bigint NOT NULL,
+    "width"                 bigint NOT NULL,
+    PRIMARY KEY ("id", "carrier")
 );
 
 CREATE TABLE "schedules"
@@ -23,27 +21,26 @@ CREATE TABLE "schedules"
     "id"          BIGSERIAL PRIMARY KEY,
     "departure"   timestamptz,
     "arrival"     timestamptz,
-    "source"      text NOT NULL,
-    "destination" text NOT NULL,
-    "carrier"     bigint,
-    "route"       bigint,
-    "airplane"    bigint
+    "source"      text   NOT NULL,
+    "destination" text   NOT NULL,
+    "flight"      bigint,
+    "carrier"     bigint NOT NULL
 );
 
 CREATE TABLE "reservations"
 (
-    "id"     BIGSERIAL PRIMARY KEY,
-    "flight" bigint  NOT NULL,
-    "user"   text    NOT NULL,
-    "row"    bigint  NOT NULL,
-    "seat"   char(1) NOT NULL
+    "id"       BIGSERIAL PRIMARY KEY,
+    "schedule" bigint  NOT NULL,
+    "user"     text    NOT NULL,
+    "row"      bigint  NOT NULL,
+    "seat"     char(1) NOT NULL
 );
 
-ALTER TABLE "airplanes"
+ALTER TABLE "flights"
     ADD FOREIGN KEY ("carrier") REFERENCES "carriers" ("id");
 
 ALTER TABLE "schedules"
-    ADD FOREIGN KEY ("airplane") REFERENCES "airplanes" ("id");
+    ADD FOREIGN KEY ("flight", "carrier") REFERENCES "flights" ("id", "carrier");
 
 ALTER TABLE "reservations"
-    ADD FOREIGN KEY ("flight") REFERENCES "schedules" ("id");
+    ADD FOREIGN KEY ("schedule") REFERENCES "schedules" ("id");

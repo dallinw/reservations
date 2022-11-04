@@ -10,14 +10,7 @@ use crate::config::api_errors::ApiError;
 use crate::config::AppState;
 
 #[derive(Deserialize, Serialize, Debug, Clone, ToSql, FromSql)]
-pub struct Route {
-    pub source: String,
-    pub destination: String,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone, ToSql, FromSql)]
 pub struct RequestBody {
-    pub route: Route,
     pub flight: String,
     pub departure: DateTime<Utc>,
 }
