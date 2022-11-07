@@ -149,7 +149,8 @@ mod tests {
             &format!("test_{}", random_name),
         ).await;
 
-        let _commit = transaction.commit().await;
+        // Commits only needed for integration tests when we must persist data
+        // let _commit = transaction.commit().await;
 
         match create_outcome {
             Ok(_) => {
@@ -175,7 +176,8 @@ mod tests {
             &"DA".to_string(),
         ).await;
 
-        let _commit = transaction.commit().await;
+        // Commits only needed for integration tests when we must persist data
+        // let _commit = transaction.commit().await;
 
         match create_outcome {
             Ok(_) => {
