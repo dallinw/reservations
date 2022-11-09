@@ -10,6 +10,18 @@
 //! specific to this project.
 //!
 
+//! Barebone SQL functions to provide database CRUD functions.
+//!
+//! In the real world, management would have to be 100% external and independent to the
+//! actual reservations. The utility is included here to help build a functional example. It
+//! is leveraged in the integration tests which are used to seed a fully end to end
+//! test environment.
+//!
+//! The database operations themselves we do not unit test, we should not unit test functionality
+//! of external or 3rd party libs, that is their responsibility. We unit test our code and logic
+//! specific to this project.
+//!
+
 use deadpool_postgres::Transaction;
 use postgres_types::{FromSql, ToSql};
 use serde::{Deserialize, Serialize};
