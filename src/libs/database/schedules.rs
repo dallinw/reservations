@@ -1,105 +1,72 @@
-//! Barebone SQL functions to provide database CRUD functions.
-//!
-//! In the real world, management would have to be 100% external and independent to the
-//! actual reservations. The utility is included here to help build a functional example. It
-//! is leveraged in the integration tests which are used to seed a fully end to end
-//! test environment.
-//!
-//! The database operations themselves we do not unit test, we should not unit test functionality
-//! of external or 3rd party libs, that is their responsibility. We unit test our code and logic
-//! specific to this project.
-//!
-
-//! Barebone SQL functions to provide database CRUD functions.
-//!
-//! In the real world, management would have to be 100% external and independent to the
-//! actual reservations. The utility is included here to help build a functional example. It
-//! is leveraged in the integration tests which are used to seed a fully end to end
-//! test environment.
-//!
-//! The database operations themselves we do not unit test, we should not unit test functionality
-//! of external or 3rd party libs, that is their responsibility. We unit test our code and logic
-//! specific to this project.
-//!
-
+use chrono::{DateTime, Utc};
 use deadpool_postgres::Transaction;
 use postgres_types::{FromSql, ToSql};
 use serde::{Deserialize, Serialize};
-use tokio_postgres::Statement;
+use tokio_postgres::{Row, Statement};
 
 use crate::config::api_errors::ApiError;
 
 #[derive(Deserialize, Serialize, Debug, Clone, ToSql, FromSql)]
-pub struct Flight {
+pub struct Schedule {
     pub id: i64,
+    pub departure: DateTime<Utc>,
+    pub arrival: DateTime<Utc>,
+    pub source: String,
+    pub destination: String,
+    pub flight: i64,
     pub carrier: String,
-    pub first_class_seat_rows: i64,
-    pub economy_seat_rows: i64,
-    pub width: i64,
 }
 
 pub async fn create(
     transaction: &Transaction<'_>,
-    carrier: &String,
-    first_class_seat_rows: &i64,
-    economy_seat_rows: &i64,
-    width: &i64,
-) -> Result<Vec<Flight>, ApiError> {
+    name: &String,
+    abbreviation: &String,
+) -> Result<Vec<Schedule>, tokio_postgres::Error> {
     // Insert into the Carrier table
     let query = r#"
         INSERT INTO
-            flights
+            schedules
             (
-                carrier,
-                first_class_seat_rows,
-                economy_seat_rows,
-                width
+                departure,
+                arrival,
+                source,
+                destination,
+                flight,
+                carrier
             )
         VALUES
-            ($1, $2, $3, $4)
-        ON CONFLICT DO NOTHING
+            ($1, $2, $3, $4, $5, $6)
         RETURNING
-            id, carrier, first_class_seat_rows, economy_seat_rows, width;
+            id,
+            departure,
+            arrival,
+            source,
+            destination,
+            flight,
+            carrier
     "#;
 
     let statement: Statement = transaction.prepare_cached(query).await.unwrap();
 
-    let raw_transaction_result = transaction.query(&statement, &[
-        carrier,
-        first_class_seat_rows,
-        economy_seat_rows,
-        width
+    let raw_carrier_query = transaction.query(&statement, &[
+        departure,
+        arrival,
+        source,
+        destination,
+        flight,
+        carrier
     ]).await;
 
-    let rows = match raw_transaction_result {
+    let rows = match raw_carrier_query {
         Ok(value) => value,
         Err(error) => {
             log::error!("{:#?}", error);
 
-            return Err(ApiError::DatabaseError);
+            return Err(error);
         }
     };
 
-    let mut flights: Vec<Flight> = vec![];
+    let carriers: Vec<Schedule> = parse_results(rows);
 
-    for row in rows {
-        // Postgres forces you to make assumptions
-        let id: i64 = row.get(0);
-        let carrier: String = row.get(1);
-        let first_class_seat_rows: i64 = row.get(2);
-        let economy_seat_rows: i64 = row.get(3);
-        let width: i64 = row.get(4);
-
-        let flight: Flight = Flight {
-            id,
-            carrier,
-            first_class_seat_rows,
-            economy_seat_rows,
-            width,
-        };
-
-        flights.push(flight);
-    }
-
-    Ok(flights)
+    Ok(carriers)
 }

@@ -1,0 +1,23 @@
+version: "3.9"
+
+networks:
+  development:
+    driver: bridge
+    attachable: true
+
+services:
+  #  application:
+  #    build: .
+  #    networks:
+  #      - development
+  #    hostname: development-node-1
+  #    container_name: application
+
+  database:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=GFSwcnzMUR4kHqWEXFsFXQeL345rsdgsd
+      - POSTGRES_DB=development

@@ -1,0 +1,1 @@
+Two alternative deployment methods to show two different strategies
